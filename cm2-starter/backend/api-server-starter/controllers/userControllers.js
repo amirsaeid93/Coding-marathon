@@ -38,7 +38,7 @@ const registerUser = async (req, res) => {
 
     jwt.sign(
       payload,
-      process.env.JWT_SECRET,
+      process.env.SECRET,
       { expiresIn: '1h' },
       (err, token) => {
         if (err) throw err;
@@ -79,7 +79,7 @@ const loginUser = async (req, res) => {
 
     jwt.sign(
       payload,
-      process.env.JWT_SECRET,
+      process.env.SECRET,
       { expiresIn: '1h' },
       (err, token) => {
         if (err) throw err;

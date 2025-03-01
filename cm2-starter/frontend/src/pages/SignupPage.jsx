@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
+    phone_number: '',
+    gender: '',
+    date_of_birth: '',
+    membership_status: '',
   });
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -14,15 +21,36 @@ const SignupPage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Logic to handle signup will be added later
-    console.log('Signup form submitted', formData);
+    setError('');
+
+    try {
+      const res = await fetch('http://localhost:4000/api/users/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || 'Something went wrong');
+      }
+
+      const data = await res.json();
+      localStorage.setItem('token', data.token);
+      navigate('/jobs');
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">Signup</h2>
+      {error && <p className="text-red-500">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="form-group">
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
@@ -55,6 +83,54 @@ const SignupPage = () => {
             id="password"
             name="password"
             value={formData.password}
+            onChange={handleChange}
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="phone_number" className="block text-sm font-medium text-gray-700">Phone Number</label>
+          <input
+            type="text"
+            id="phone_number"
+            name="phone_number"
+            value={formData.phone_number}
+            onChange={handleChange}
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="gender" className="block text-sm font-medium text-gray-700">Gender</label>
+          <input
+            type="text"
+            id="gender"
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="date_of_birth" className="block text-sm font-medium text-gray-700">Date of Birth</label>
+          <input
+            type="date"
+            id="date_of_birth"
+            name="date_of_birth"
+            value={formData.date_of_birth}
+            onChange={handleChange}
+            required
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="membership_status" className="block text-sm font-medium text-gray-700">Membership Status</label>
+          <input
+            type="text"
+            id="membership_status"
+            name="membership_status"
+            value={formData.membership_status}
             onChange={handleChange}
             required
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"

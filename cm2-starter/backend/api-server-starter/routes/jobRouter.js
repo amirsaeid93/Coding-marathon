@@ -1,6 +1,6 @@
 const express = require('express');
 const {
-  getJobs,
+  getAllJobs,
   getJob,
   createJob,
   updateJob,
@@ -10,7 +10,7 @@ const requireAuth = require('../middleware/requireAuth');
 
 const router = express.Router();
 
-router.get('/', getJobs);
+router.get('/', getAllJobs);
 router.get('/:id', getJob);
 router.post('/', requireAuth, createJob); // Protect route
 router.put('/:id', requireAuth, updateJob); // Protect route

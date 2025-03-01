@@ -1,14 +1,18 @@
 const Job = require('../models/jobModel');
 
-// Get all jobs
-const getJobs = async (req, res) => {
+
+const getAllJobs = async (req, res) => {
   try {
-    const jobs = await Job.find();
+    const limit = parseInt(req.query._limit);
+    const jobs = limit 
+      ? await Job.find({}).sort({ createdAt: -1 }).limit(limit)
+      : await Job.find({}).sort({ createdAt: -1 });
     res.status(200).json(jobs);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 // Get a single job
 const getJob = async (req, res) => {
@@ -58,7 +62,7 @@ const deleteJob = async (req, res) => {
 };
 
 module.exports = {
-  getJobs,
+  getAllJobs,
   getJob,
   createJob,
   updateJob,

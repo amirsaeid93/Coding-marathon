@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import useLogin from '../hooks/useLogin';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const { login, error } = useLogin();
 
   const handleChange = (e) => {
     setFormData({
@@ -16,30 +15,9 @@ const LoginPage = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setError('');
-
-    try {
-      const res = await fetch('http://localhost:4000/api/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || 'Something went wrong');
-      }
-
-      const data = await res.json();
-      localStorage.setItem('token', data.token);
-      navigate('/jobs');
-    } catch (error) {
-      setError(error.message);
-    }
+    login(formData);
   };
 
   return (

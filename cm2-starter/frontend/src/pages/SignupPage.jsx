@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import useSignup from '../hooks/useSignup';
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -11,8 +11,7 @@ const SignupPage = () => {
     date_of_birth: '',
     membership_status: '',
   });
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const { signup, error } = useSignup();
 
   const handleChange = (e) => {
     setFormData({
@@ -21,30 +20,9 @@ const SignupPage = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setError('');
-
-    try {
-      const res = await fetch('http://localhost:4000/api/users/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.message || 'Something went wrong');
-      }
-
-      const data = await res.json();
-      localStorage.setItem('token', data.token);
-      navigate('/jobs');
-    } catch (error) {
-      setError(error.message);
-    }
+    signup(formData);
   };
 
   return (
